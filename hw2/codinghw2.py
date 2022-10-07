@@ -33,6 +33,7 @@ def getUserDate(input, currentMonth, currentDay, currentYear):
         "November": 11,
         "December": 12,
     }
+    file = open("parsedDates.txt", "w")
     for x in range(len(input)):
         indate = input[x]
         if ',' in indate:
@@ -47,12 +48,16 @@ def getUserDate(input, currentMonth, currentDay, currentYear):
                         if userMonth <= currentMonth:
                             if userMonth == currentMonth:
                                 if userDay <= currentDay:
+                                    file.write(f'{userMonth}/{userDay}/{userYear}\n')
                                     print(f'{userMonth}/{userDay}/{userYear}')
                             else:
+                                file.write(f'{userMonth}/{userDay}/{userYear}\n')
                                 print(f'{userMonth}/{userDay}/{userYear}')
                         else:
+                            file.write(f'{userMonth}/{userDay}/{userYear}\n')
                             print(f'{userMonth}/{userDay}/{userYear}')
                     else:
+                        file.write(f'{userMonth}/{userDay}/{userYear}\n')
                         print(f'{userMonth}/{userDay}/{userYear}')
 
 
