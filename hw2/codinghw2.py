@@ -2,9 +2,22 @@
 from datetime import date
 import sys
 
-def main():
-    formatedDate = ""
 
+def main():
+    # splitting current day for checks
+
+    current = date.today()
+    currentMonth = current.month
+    currentDay = current.day
+    currentYear = current.year
+
+    with open("inputDates.txt") as f:
+        inputdates = [line.rstrip() for line in f]
+    print(inputdates)
+    getUserDate(inputdates, currentMonth, currentDay, currentYear)
+
+
+def getUserDate(input, currentMonth, currentDay, currentYear):
     # dictionary of months
     monthdict = {
         "January": 1,
@@ -20,32 +33,28 @@ def main():
         "November": 11,
         "December": 12,
     }
-    # splitting current day for checks
+    for x in range(len(input)):
+        indate = input[x]
+        if ',' in indate:
+            indate2 = indate.replace(',', '')
+            sliced = indate2.split(" ")
+            if sliced[0] in monthdict:
+                userMonth = int(monthdict[sliced[0]])
+                userDay = int(sliced[1])
+                userYear = int(sliced[2])
+                if userYear <= currentYear:
+                    if userYear == currentYear:
+                        if userMonth <= currentMonth:
+                            if userMonth == currentMonth:
+                                if userDay <= currentDay:
+                                    print(f'{userMonth}/{userDay}/{userYear}')
+                            else:
+                                print(f'{userMonth}/{userDay}/{userYear}')
+                        else:
+                            print(f'{userMonth}/{userDay}/{userYear}')
+                    else:
+                        print(f'{userMonth}/{userDay}/{userYear}')
 
-    current = date.today()
-    currentMonth = current.month
-    currentDay = current.day
-    currentYear = current.year
-
-
-    indate = input()
-    indate2 = ""
-    if ',' in indate:
-        indate2 = indate.replace(',', '')
-    else:
-        sys.exit()
-
-    sliced = indate2.split(" ")
-
-    if sliced[0] in monthdict:
-        userMonth = monthdict[sliced[0]]
-    else:
-        sys.exit()
-    userDay = int(sliced[1])
-    userYear = int(sliced[2])
-
-    if userYear <= currentYear and userDay <= currentDay:
-        print(f'{userMonth}/{userDay}/{userYear}')
 
 if __name__ == '__main__':
     main()
