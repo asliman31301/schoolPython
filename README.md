@@ -1,5 +1,3 @@
-# schoolPython
-all for CS programming class
+HW#3
 
-All my python files for homeworks in their respective folders
-
+This assignment was a real test of abilities. I feel as though Ive completed them to the best of my ability. 
