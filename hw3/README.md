@@ -1,3 +1,3 @@
-HW#3
+#HW3
 
-This assignment was a real test of abilities. I feel as though Ive completed them to the best of my ability. 
+Hw3 was a great exerise in everything we have learned from lists and dictonaries to all other tools.
