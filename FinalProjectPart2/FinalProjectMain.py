@@ -1,12 +1,13 @@
 # Ahmad SLiman 1898612
 import csv
 import datetime#to get current date
+import sys
 #all my data structures
 inventory = []
-pastdateinv = []
-damagedinv = []
+#pastdateinv = []
+#damagedinv = []
 types = []
-pastserv = []
+#pastserv = []
 
 
 # Created an item class to make data manipulation easier.
@@ -19,12 +20,15 @@ class item():
         self.servicedate = servicedate
         self.price = price
 
+
     # this is to get the different text to go in CSV files
     def print_item(self, x):
         if x == 1:
             r = self.id, self.manufacturer, self.type, self.price, self.servicedate, self.damaged
         if x == 2:
             r = self.id, self.manufacturer, self.type, self.price, self.servicedate
+        if x == 3:
+            r = self.id, self.manufacturer, self.type, self.price
         return r
 
 
@@ -38,7 +42,7 @@ def getManuList():
             manu = row[1]
             type = row[2]
             damage = row[3]
-            i = item(id, manu, type, damage)
+            i = item(id, manu.strip(), type.strip(), damage)
             inventory.append(i)
             l = 1
             inventory[x].print_item(l)
@@ -76,13 +80,9 @@ def getdamaged():
     y = 0
     for i in inventory:
         if inventory[y].damaged == "damaged":
-            damagedinv.append(inventory[y])
-        y += 1
-    x = 0
-    for i in damagedinv:
-        l = 2
-        damagedinv[x].print_item(l)
-        x += 1
+            #damagedinv.append(inventory[y])
+            y += 1
+
     damageout() #addes all the damaged to an array
 
 #the bellow 3 are for geting the key to sort for the files
@@ -111,13 +111,19 @@ def fullinvout():
 
 #damaged inventory
 def damageout():
+    damagedItems = []
+    y = 0
+    for i in inventory:
+        if inventory[y].damaged == "damaged":
+            damagedItems.append(inventory[y])
+        y += 1
+
     x = 0
-    damagedinv.sort(key=getKeyprice, reverse=True)
+    damagedItems.sort(key=getKeyprice, reverse=True)
     with open("DamagedInventory.csv", 'w') as csvfile:
         csvwriter = csv.writer(csvfile)
-        for i in damagedinv:
-            l = 2
-            rows = damagedinv[x].print_item(l)
+        for i in damagedItems:
+            rows = damagedItems[x].print_item(1)
             csvwriter.writerow(rows)
             x += 1
 
@@ -154,35 +160,49 @@ def getTypes():
 #past service date
 def datecheck():
     #I know you said no other modules but i figured this didnt count, had to get current day.
-    date1 = datetime.datetime.now()
+    today = datetime.datetime.now()
     x = 0
+    pastserv = []
     #logic for seeing if its past the current date.
     for i in inventory:
-        tempday = inventory[x].servicedate
-        splittemp = tempday.split('/')
-        servmonth = int(splittemp[0])
-        servday = int(splittemp[1])
-        servyear = int(splittemp[2])
-        if servyear < date1.year:
-            pastserv.append(inventory[x])
-        elif servyear == date1.year:
-            if servmonth < date1.month:
-                pastserv.append(inventory[x])
-            elif servmonth == date1.month:
-                if servday < date1.day:
-                    pastserv.append(inventory[x])
-                elif servday == date1.day:
-                    pastserv.append(inventory[x])
+        serviceDate = datetime.datetime.strptime(inventory[x].servicedate, '%m/%d/%Y')
+        if today > serviceDate:
+            pastserv.append(i)
         x += 1
     y = 0
-    l = 1
     #creates file
     with open("PastServiceDateInventory.csv", 'w') as csvfile:
         csvwriter = csv.writer(csvfile)
         for i in pastserv:
-            row = pastserv[y].print_item(2)
+            row = pastserv[y].print_item(1)
             csvwriter.writerow(row)
             y += 1
+
+def creatFinal(user_in):
+    today = datetime.datetime.now()
+    finalInv = []
+    z = 0
+    for item in inventory:
+        for s in user_in:
+            if s in item.type:
+                x =0
+                #print(item.type)
+        if item.manufacturer in user_in or item.type in user_in:
+            serviceDate = datetime.datetime.strptime(item.servicedate, '%m/%d/%Y')
+            if today < serviceDate and item.damaged == '':
+                finalInv.append(item)
+    if len(finalInv) == 0:
+        print("No such item in inventory")
+        return 0
+    finalInv.sort(key=getKeyprice)
+    for i in finalInv:
+        if (i.manufacturer in user_in) and (i.type in user_in):
+            print("Your item is: ",i.print_item(3))
+            finalInv.remove(i)
+    if len(finalInv) > 0:
+        print("You may also like: ", finalInv[0].print_item(3))
+
+    return 0
 
 
 if __name__ == '__main__':
@@ -193,3 +213,10 @@ if __name__ == '__main__':
     fullinvout()
     getTypes()
     datecheck()
+    user_in = ''
+    while True:
+        print("Please enter manufacturer and item type, or q to quit:")
+        user_in = str.split(input())
+        if 'q' in user_in or 'Q' in user_in:
+            sys.exit(0)
+        creatFinal(user_in)
